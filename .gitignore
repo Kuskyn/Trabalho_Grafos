@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+
+# Testes / cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Ambientes virtuais
+.venv/
+venv/
+env/
+
+# Saída gerada pelo demo
+demo_graph.gexf
+
+# IDE / SO
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
