@@ -1,0 +1,103 @@
+\documentclass[12pt]{article}
+
+\usepackage{sbc-template}
+\usepackage{graphicx,url}
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+
+\sloppy
+
+\title{Biblioteca para Manipulação de Grafos Simples e Direcionados:\\Relatório da Etapa 1}
+
+\author{Luan  Inaibes\inst{1}, Otávio Santos\inst{1}, Arthur Luis\inst{1}}
+
+\address{Curso de Computação -- Instituição de Ensino\\
+  Cidade -- Estado -- Brasil
+  \email{kuskynz@gmail.com}
+}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+
+\end{abstract}
+
+\begin{resumo}
+
+\end{resumo}
+
+\section{Arquitetura e API}
+
+A biblioteca é estruturada em torno da classe abstrata
+\texttt{AbstractGraph}, que define a API comum, mantém os atributos
+compartilhados (como os pesos dos vértices), fornece métodos auxiliares
+(por exemplo, a validação de índices de vértices) e declara os métodos
+abstratos implementados pelas classes concretas. Algoritmos
+independentes de representação, como a verificação de conectividade e a
+exportação para o Gephi, são implementados uma única vez na classe
+abstrata.
+
+Duas classes concretas estendem \texttt{AbstractGraph}:
+
+\begin{itemize}
+  \item \texttt{AdjacencyMatrixGraph}: representa as arestas em uma matriz
+  $n \times n$, em que cada posição armazena o peso da aresta
+  correspondente, favorecendo consultas de existência e de peso em tempo
+  constante;
+  \item \texttt{AdjacencyListGraph}: representa as arestas por listas de
+  adjacência (dicionários destino~$\rightarrow$~peso), com conjuntos de
+  predecessores auxiliares, favorecendo grafos esparsos.
+\end{itemize}
+
+Ambas recebem no construtor o número de vértices do grafo e respeitam o
+mesmo contrato comportamental. A API inclui, entre outros métodos:
+contagem de vértices e arestas; \texttt{addEdge}, \texttt{removeEdge} e
+\texttt{hasEdge}; consultas de sucessor e predecessor; predicados
+estruturais (\texttt{isDivergent}, \texttt{isConvergent},
+\texttt{isIncident}); cálculo de grau de entrada e de saída; definição e
+consulta de pesos de vértices e de arestas.
+
+\section{Restrições e Tratamento de Erros}
+
+A operação \texttt{addEdge} é idempotente (chamadas repetidas com o mesmo par de
+vértices não criam arestas duplicadas) e proíbe laços. São lançadas
+exceções específicas para índices de vértices inválidos e para operações
+inconsistentes.
+
+\section{Demonstração}
+
+Acompanha a biblioteca um programa de demonstração, executável em
+terminal, que percorre as principais funcionalidades da API construindo o
+mesmo grafo de exemplo nas duas representações e comparando os resultados
+lado a lado: criação dos grafos, inserção e remoção de arestas, consulta
+de sucessores e predecessores, cálculo de graus, definição e consulta de
+pesos de vértices e de arestas, verificações de grafo vazio, completo e
+conectado, e exportação para o Gephi.
+\section{Divisão do Trabalho}
+
+A Tabela~\ref{tab:responsabilidades} apresenta a divisão de
+responsabilidades entre os integrantes do grupo nesta etapa.
+
+\begin{table}[ht]
+\centering
+\caption{Divisão de responsabilidades do trabalho.}
+\label{tab:responsabilidades}
+\begin{tabular}{|l|p{8cm}|}
+\hline
+\textbf{Nome} & \textbf{Responsabilidades do trabalho} \\
+\hline
+Luan Inaibes & Implementação da classe abstrata \texttt{AbstractGraph}
+e da representação por matriz de adjacência. \\
+\hline
+Otávio Santos & Implementação da representação por lista de adjacência
+e da hierarquia de exceções. \\
+\hline
+Arthur Luis & Programa de demonstração, testes e
+redação do relatório. \\
+\hline
+\end{tabular}
+\end{table}
+
+\end{document}

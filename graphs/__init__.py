@@ -1,8 +1,4 @@
-"""Biblioteca de grafos simples e direcionados.
-
-Etapa atual: classe abstrata, hierarquia de exceções e representações por
-matriz de adjacência e por lista de adjacência.
-"""
+"""Biblioteca de grafos simples e direcionados."""
 
 from .abstract_graph import AbstractGraph
 from .adjacency_list_graph import AdjacencyListGraph

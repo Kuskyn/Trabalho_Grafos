@@ -19,6 +19,15 @@ env/
 # Saída gerada pelo demo
 demo_graph.gexf
 
+# Artefatos de build do LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
 # IDE / SO
 .vscode/
 .idea/

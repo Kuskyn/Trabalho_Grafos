@@ -1,10 +1,4 @@
-"""Suite de testes automatizados para a biblioteca ``graphs``.
-
-Cobre o contrato comportamental compartilhado por ``AdjacencyMatrixGraph`` e
-``AdjacencyListGraph`` (parametrizado via fixture) e inclui um teste de
-paridade explícito que constrói o mesmo grafo nas duas representações e
-compara os resultados de toda a API pública.
-"""
+"""Testes da biblioteca ``graphs``, parametrizados para as duas representações."""
 
 import xml.etree.ElementTree as ET
 
@@ -25,9 +19,7 @@ def graph_factory(request):
     return request.param
 
 
-# ---------------------------------------------------------------------------
 # Construtor
-# ---------------------------------------------------------------------------
 
 class TestConstructor:
     def test_default_state_has_no_edges(self, graph_factory):
@@ -59,14 +51,11 @@ class TestConstructor:
 
     @pytest.mark.parametrize("bad", [True, False])
     def test_bool_vertex_count_raises_value_error(self, graph_factory, bad):
-        # bool is a subclass of int in Python but must be explicitly rejected.
         with pytest.raises(ValueError):
             graph_factory(bad)
 
 
-# ---------------------------------------------------------------------------
 # addEdge / removeEdge / hasEdge / isSuccessor / isPredecessor
-# ---------------------------------------------------------------------------
 
 class TestEdgeMutation:
     def test_add_edge_creates_edge(self, graph_factory):
@@ -91,7 +80,7 @@ class TestEdgeMutation:
         g = graph_factory(3)
         g.addEdge(0, 1)
         g.setEdgeWeight(0, 1, 42.0)
-        g.addEdge(0, 1)  # repeat call must not reset the weight
+        g.addEdge(0, 1)
         assert g.getEdgeWeight(0, 1) == 42.0
 
     def test_new_edge_has_default_weight(self, graph_factory):
@@ -120,7 +109,6 @@ class TestEdgeMutation:
 
     def test_remove_edge_noop_if_absent(self, graph_factory):
         g = graph_factory(3)
-        # Should not raise even though edge never existed.
         g.removeEdge(0, 1)
         assert g.getEdgeCount() == 0
 
@@ -154,14 +142,11 @@ class TestEdgeMutation:
         assert g.isPredecessor(1, 0) is False
 
 
-# ---------------------------------------------------------------------------
 # Predicados estruturais: isDivergent / isConvergent / isIncident
-# ---------------------------------------------------------------------------
 
 class TestStructuralPredicates:
     def test_is_divergent_true_when_same_source_diff_target(self, graph_factory):
         g = graph_factory(4)
-        # No edges added at all -- predicate is purely structural.
         assert g.isDivergent(0, 1, 0, 2) is True
 
     def test_is_divergent_false_when_diff_source(self, graph_factory):
@@ -199,7 +184,6 @@ class TestStructuralPredicates:
     def test_structural_predicates_do_not_require_edge_existence(self, graph_factory):
         g = graph_factory(4)
         assert g.getEdgeCount() == 0
-        # None of these edges exist, yet the predicates are well-defined.
         assert g.isDivergent(2, 3, 2, 0) is True
         assert g.isConvergent(3, 0, 1, 0) is True
         assert g.isIncident(2, 3, 3) is True
@@ -224,9 +208,7 @@ class TestStructuralPredicates:
             getattr(g, method)(*args)
 
 
-# ---------------------------------------------------------------------------
 # Graus de vértice
-# ---------------------------------------------------------------------------
 
 class TestDegrees:
     def test_in_and_out_degree_counts(self, graph_factory):
@@ -262,9 +244,7 @@ class TestDegrees:
             g.getVertexOutDegree(3)
 
 
-# ---------------------------------------------------------------------------
 # Pesos de vértice
-# ---------------------------------------------------------------------------
 
 class TestVertexWeights:
     def test_round_trip(self, graph_factory):
@@ -287,9 +267,7 @@ class TestVertexWeights:
             g.getVertexWeight(3)
 
 
-# ---------------------------------------------------------------------------
 # Pesos de aresta
-# ---------------------------------------------------------------------------
 
 class TestEdgeWeights:
     def test_round_trip(self, graph_factory):
@@ -323,9 +301,7 @@ class TestEdgeWeights:
             g.setEdgeWeight(0, 5, 1.0)
 
 
-# ---------------------------------------------------------------------------
 # isEmptyGraph / isCompleteGraph
-# ---------------------------------------------------------------------------
 
 class TestEmptyAndComplete:
     def test_empty_graph_true_initially(self, graph_factory):
@@ -370,9 +346,7 @@ class TestEmptyAndComplete:
         assert g1.isCompleteGraph() is True  # 0 == 1*0
 
 
-# ---------------------------------------------------------------------------
 # isConnected
-# ---------------------------------------------------------------------------
 
 class TestConnectivity:
     def test_zero_vertex_graph_is_connected(self, graph_factory):
@@ -394,9 +368,7 @@ class TestConnectivity:
         assert g.isConnected(strong=True) is True
 
     def test_weakly_but_not_strongly_connected(self, graph_factory):
-        # A simple directed path 0 -> 1 -> 2 -> 3 is weakly connected
-        # (ignoring direction it's a connected chain) but not strongly
-        # connected (cannot get back from 3 to 0).
+        # Caminho 0->1->2->3: fracamente conectado, mas não fortemente.
         n = 4
         g = graph_factory(n)
         g.addEdge(0, 1)
@@ -410,7 +382,6 @@ class TestConnectivity:
         g = graph_factory(n)
         g.addEdge(0, 1)
         g.addEdge(2, 3)
-        # Two separate components -- not even weakly connected.
         assert g.isConnected(strong=False) is False
         assert g.isConnected(strong=True) is False
 
@@ -420,12 +391,10 @@ class TestConnectivity:
         assert g.isConnected(strong=True) is False
 
 
-# ---------------------------------------------------------------------------
 # exportToGEPHI
-# ---------------------------------------------------------------------------
 
 def _local_tag(elem):
-    """Returns the tag name without the XML namespace prefix, if any."""
+    """Tag sem o prefixo de namespace XML."""
     tag = elem.tag
     if "}" in tag:
         return tag.split("}", 1)[1]
@@ -503,21 +472,17 @@ class TestExportToGephi:
         assert len([e for e in edges_elem if _local_tag(e) == "edge"]) == 0
 
 
-# ---------------------------------------------------------------------------
 # Teste de paridade explícito entre as duas representações
-# ---------------------------------------------------------------------------
 
 def _build_sample_graph(cls):
-    """Builds the same non-trivial directed graph for parity comparison."""
+    """Mesmo grafo de exemplo para comparar as duas representações."""
     n = 5
     g = cls(n)
     edges = [(0, 1), (0, 2), (1, 2), (2, 3), (3, 4), (4, 0), (1, 4)]
     for u, v in edges:
         g.addEdge(u, v)
-    # Custom vertex weights.
     g.setVertexWeight(0, 10.0)
     g.setVertexWeight(3, -2.5)
-    # Custom edge weights.
     g.setEdgeWeight(0, 1, 3.3)
     g.setEdgeWeight(2, 3, 7.0)
     return g, n

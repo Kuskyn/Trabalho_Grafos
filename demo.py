@@ -1,13 +1,4 @@
-"""Programa de demonstração em terminal da biblioteca ``graphs``.
-
-Script linear e determinístico (sem entrada interativa) que percorre as
-principais funcionalidades da biblioteca, construindo o mesmo grafo de
-exemplo nas duas representações disponíveis (matriz de adjacência e lista
-de adjacência) e comparando os resultados lado a lado.
-
-Execução:
-    py demo.py
-"""
+"""Demonstração em terminal da biblioteca ``graphs`` (py demo.py)."""
 
 import os
 import sys
@@ -18,25 +9,19 @@ from graphs import (
     SelfLoopError,
 )
 
-# Garante saída em UTF-8 no terminal, independentemente da codificação
-# padrão do console do sistema operacional (ex.: cp1252/cp850 no Windows).
+# Saída em UTF-8 mesmo em consoles Windows (cp1252/cp850).
 sys.stdout.reconfigure(encoding="utf-8")
 
-# Arestas do grafo de exemplo: um ciclo (0->1->2->3->4->0) mais uma corda
-# (1->3). O ciclo, por si só, já torna o grafo fortemente conectado (há
-# caminho de ida e volta entre quaisquer dois vértices seguindo o sentido
-# das arestas); a corda 1->3 é apenas um atalho adicional dentro do ciclo.
+# Ciclo 0->1->2->3->4->0 (fortemente conectado) mais a corda 1->3.
 SAMPLE_EDGES = [(0, 1), (1, 2), (2, 3), (3, 4), (4, 0), (1, 3)]
 SAMPLE_VERTEX_COUNT = 5
 
 
 def section(title: str) -> None:
-    """Imprime um cabeçalho de seção padronizado."""
     print("\n=== " + title + " ===")
 
 
 def buildSampleGraphs():
-    """Cria o grafo de exemplo nas duas representações, com as mesmas arestas."""
     matrixGraph = AdjacencyMatrixGraph(SAMPLE_VERTEX_COUNT)
     listGraph = AdjacencyListGraph(SAMPLE_VERTEX_COUNT)
     for u, v in SAMPLE_EDGES:
